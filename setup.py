@@ -8,7 +8,7 @@ except ImportError:
 from setuptools import setup
 
 setup(
-    name='Yield With SetUp',
+    name='nose-yield-setup',
     version='0.1',
     author='Mateusz Galganek',
     author_email = 'galganek.mateusz@gmail.com',
