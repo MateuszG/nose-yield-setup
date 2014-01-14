@@ -32,7 +32,7 @@ class NewFunctionTestCase(FunctionTestCase):
         else:
             names = ('setup', 'setUp', 'setUpFunc')
             try_run(self.test, names)
-            self.cls().setup_mocks()
+        self.cls().setup_mocks()
 
     def __str__(self):
         func, _ = self._descriptors()
