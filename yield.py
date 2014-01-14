@@ -1,5 +1,5 @@
 import nose
-from nose.case import FunctionTestCase
+from nose.case import FunctionTestCase, try_run
 from nose.plugins import Plugin
 from nose.loader import TestLoader
 from nose.pyversion import ismethod
@@ -21,6 +21,18 @@ class NewFunctionTestCase(FunctionTestCase):
     ):
         self.cls = cls
         FunctionTestCase.__init__(self, test, setUp, tearDown, arg, descriptor)
+
+    def setUp(self):
+        """
+        Run any setup function attached to the test function.
+        Added setup_mocks() which must be run when call mock from inherit class
+        """
+        if self.setUpFunc:
+            self.setUpFunc()
+        else:
+            names = ('setup', 'setUp', 'setUpFunc')
+            try_run(self.test, names)
+            self.cls().setup_mocks()
 
     def __str__(self):
         func, _ = self._descriptors()
@@ -49,7 +61,6 @@ class CustomLoader(TestLoader):
 
         def generate():
             for test in generator(test_class_instance):
-
                 test_func, arg = self.parseGeneratedTest(test)
                 yield NewFunctionTestCase(test=test_func, arg=arg, cls=cls)
 
