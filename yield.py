@@ -20,6 +20,7 @@ class NewFunctionTestCase(FunctionTestCase):
             descriptor=None
     ):
         self.cls = cls
+        self.inst = self.cls()
         FunctionTestCase.__init__(self, test, setUp, tearDown, arg, descriptor)
 
     def setUp(self):
@@ -27,12 +28,10 @@ class NewFunctionTestCase(FunctionTestCase):
         Run any setup function attached to the test function.
         Added setup_mocks() which must be run when call mock from inherit class
         """
-        if self.setUpFunc:
-            self.setUpFunc()
-        else:
-            names = ('setup', 'setUp', 'setUpFunc')
-            try_run(self.test, names)
-        self.cls().setup_mocks()
+        try_run(self.inst, ('setup_mocks', 'setup', 'setUp'))
+
+    def tearDown(self):
+        try_run(self.inst, ('teardown_mocks', 'teardown', 'tearDown'))
 
     def __str__(self):
         func, _ = self._descriptors()
