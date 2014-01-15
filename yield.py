@@ -16,9 +16,10 @@ class NewFunctionTestCase(FunctionTestCase):
     """
 
     def __init__(
-            self, cls, test, setUp=None, tearDown=None, arg=tuple(),
+            self, cls, test, test_name, setUp=None, tearDown=None, arg=tuple(),
             descriptor=None
     ):
+        self.test_name = test_name
         self.cls = cls
         self.inst = self.cls()
         FunctionTestCase.__init__(self, test, setUp, tearDown, arg, descriptor)
@@ -26,7 +27,7 @@ class NewFunctionTestCase(FunctionTestCase):
     def setUp(self):
         """
         Run any setup function attached to the test function.
-        Added setup_mocks() which must be run when call mock from inherit class
+        Added setup_mocks which must be run when call mock from inherit class
         """
         try_run(self.inst, ('setup_mocks', 'setup', 'setUp'))
 
@@ -39,9 +40,10 @@ class NewFunctionTestCase(FunctionTestCase):
             name = func.compat_func_name
         else:
             name = func.__name__
-        name = "%s.%s.%s" % (
+        name = "%s.%s.%s.%s" % (
             self.cls.__module__,
             self.cls.__name__,
+            self.test_name,
             name
         )
         return name
@@ -61,8 +63,12 @@ class CustomLoader(TestLoader):
         def generate():
             for test in generator(test_class_instance):
                 test_func, arg = self.parseGeneratedTest(test)
-                yield NewFunctionTestCase(test=test_func, arg=arg, cls=cls)
-
+                yield NewFunctionTestCase(
+                    test=test_func,
+                    arg=arg,
+                    cls=cls,
+                    test_name=generator.im_func.__name__
+                )
         return self.suiteClass(generate, context=generator, can_split=False)
 
 
