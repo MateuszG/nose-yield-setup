@@ -43,10 +43,7 @@ class NewFunctionTestCase(FunctionTestCase):
         in full path to actual processing test.
         """
         func, _ = self._descriptors()
-        if hasattr(func, 'compat_func_name'):
-            name = func.compat_func_name
-        else:
-            name = func.__name__
+        name = func.__name__
         name = "%s.%s.%s.%s" % (
             self.cls.__module__,
             self.cls.__name__,
@@ -57,7 +54,7 @@ class NewFunctionTestCase(FunctionTestCase):
     __repr__ = __str__
 
 
-class CustomLoader(TestLoader):
+class CustomLoaderForGenerators(TestLoader):
     """
     Based on nose function: loadTestsFromGenerator from loader.py,
     which Lazy-load tests from a generator function.
@@ -101,12 +98,12 @@ class YieldWithSetUp(Plugin):
 
     def makeTest(self, obj, cls):
         """
-        Only this function form nose API give test (cls) and testCase (cls).
+        Only this function from nose API give test (cls) and testCase (cls).
         """
         if ismethod(obj) and isgenerator(obj) and isclass(cls):
 
             # If generator is found, override loader from nose
-            x = CustomLoader()
+            x = CustomLoaderForGenerators()
 
             # 'return' is required on x because with yield tests in generator
             # will not change to next
