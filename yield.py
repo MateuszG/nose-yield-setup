@@ -29,7 +29,7 @@ class NewFunctionTestCase(FunctionTestCase):
 
     def setUp(self):
         """
-        Run any setup function attached to the test function.
+        Run setup function attached to the test function.
         Added setup_mocks which must be run when call mock from inherited class.
         """
         try_run(self.inst, ('setup_mocks', 'setUp'))
