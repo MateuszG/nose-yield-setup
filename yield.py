@@ -66,7 +66,7 @@ class CustomLoaderForGenerators(TestLoader):
     def load_tests_from_generator_method_with_set_up(self, generator, cls):
         """
         Create instance of TestCase to call setUp, which is need to
-        prevent error: (No api proxy found for service "datastore_v3".
+        prevent error: (No api proxy found for service "datastore_v3)".
         """
         test_class_instance = cls()
         test_class_instance.setUp()
