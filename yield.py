@@ -1,7 +1,10 @@
 import nose
-from nose.case import FunctionTestCase, try_run
-from nose.plugins import Plugin
+from nose.case import (
+    FunctionTestCase,
+    try_run
+)
 from nose.loader import TestLoader
+from nose.plugins import Plugin
 from nose.pyversion import ismethod
 from nose.util import (
     isclass,
