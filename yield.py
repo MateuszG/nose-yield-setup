@@ -78,9 +78,9 @@ class CustomLoaderForGenerators(TestLoader):
             and limit operations to have only those which are required.
             """
             for test in generator(test_class_instance):
-                test_func, arg = self.parseGeneratedTest(test)
+                test_internal_check, arg = self.parseGeneratedTest(test)
                 yield NewFunctionTestCase(
-                    test=test_func,
+                    test=test_internal_check,
                     arg=arg,
                     cls=cls,
                     test_name=generator.im_func.__name__
