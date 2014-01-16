@@ -108,8 +108,9 @@ class YieldWithSetUp(Plugin):
             # If generator is found, override loader from nose
             x = CustomLoaderForGenerators()
 
-            # 'return' is required on x because with yield tests in generator
-            # will not change to next
+            # 'return' is required on x when we have generators.
+            # This will allow in test function, change to next
+            # check function (internal function)
             return x.load_tests_from_generator_method_with_set_up(obj, cls)
 
 if __name__ == '__main__':
