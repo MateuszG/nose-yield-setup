@@ -27,14 +27,21 @@ class NewFunctionTestCase(FunctionTestCase):
     def setUp(self):
         """
         Run any setup function attached to the test function.
-        Added setup_mocks which must be run when call mock from inherit class
+        Added setup_mocks which must be run when call mock from inherit class.
         """
-        try_run(self.inst, ('setup_mocks', 'setup', 'setUp'))
+        try_run(self.inst, ('setup_mocks', 'setUp'))
 
     def tearDown(self):
-        try_run(self.inst, ('teardown_mocks', 'teardown', 'tearDown'))
+        """
+        Added teardown_mocks which must be run to stop all mocks.
+        """
+        try_run(self.inst, ('teardown_mocks', 'tearDown'))
 
     def __str__(self):
+        """
+        Added self.test_name to display in output also "check_" part of test
+        in full path to actuall procesing test.
+        """
         func, _ = self._descriptors()
         if hasattr(func, 'compat_func_name'):
             name = func.compat_func_name
@@ -57,10 +64,19 @@ class CustomLoader(TestLoader):
     """
 
     def load_tests_from_generator_method_with_set_up(self, generator, cls):
+        """
+        Create instance of TestCase to call setUp, which is need to
+        prevent error: (No api proxy found for service "datastore_v3".
+        """
         test_class_instance = cls()
         test_class_instance.setUp()
 
         def generate():
+            """
+            Rewrite internal function 'generate' from
+            loadTestsFromGeneratorMethod to send 'test_name' of "check_"
+            and limit operations to have only those which are required.
+            """
             for test in generator(test_class_instance):
                 test_func, arg = self.parseGeneratedTest(test)
                 yield NewFunctionTestCase(
@@ -69,6 +85,7 @@ class CustomLoader(TestLoader):
                     cls=cls,
                     test_name=generator.im_func.__name__
                 )
+        # Back to build-in nose method
         return self.suiteClass(generate, context=generator, can_split=False)
 
 
@@ -83,8 +100,16 @@ class YieldWithSetUp(Plugin):
         super(YieldWithSetUp, self).__init__()
 
     def makeTest(self, obj, cls):
+        """
+        Only this function form nose API give test (cls) and testCase (cls).
+        """
         if ismethod(obj) and isgenerator(obj) and isclass(cls):
+
+            # If generator is found, overide loader from nose
             x = CustomLoader()
+
+            # 'return' is required on x because with yield tests in generator
+            # will not change to next
             return x.load_tests_from_generator_method_with_set_up(obj, cls)
 
 if __name__ == '__main__':
