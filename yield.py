@@ -27,7 +27,7 @@ class NewFunctionTestCase(FunctionTestCase):
     def setUp(self):
         """
         Run any setup function attached to the test function.
-        Added setup_mocks which must be run when call mock from inherit class.
+        Added setup_mocks which must be run when call mock from inherited class.
         """
         try_run(self.inst, ('setup_mocks', 'setUp'))
 
@@ -40,7 +40,7 @@ class NewFunctionTestCase(FunctionTestCase):
     def __str__(self):
         """
         Added self.test_name to display in output also "check_" part of test
-        in full path to actuall procesing test.
+        in full path to actual processing test.
         """
         func, _ = self._descriptors()
         if hasattr(func, 'compat_func_name'):
@@ -85,7 +85,7 @@ class CustomLoader(TestLoader):
                     cls=cls,
                     test_name=generator.im_func.__name__
                 )
-        # Back to build-in nose method
+        # Back to built-in nose method
         return self.suiteClass(generate, context=generator, can_split=False)
 
 
@@ -105,7 +105,7 @@ class YieldWithSetUp(Plugin):
         """
         if ismethod(obj) and isgenerator(obj) and isclass(cls):
 
-            # If generator is found, overide loader from nose
+            # If generator is found, override loader from nose
             x = CustomLoader()
 
             # 'return' is required on x because with yield tests in generator
