@@ -11,3 +11,7 @@ add to requirements.txt line:
 
 next:
 pip install -r requirements.txt
+
+
+TODO:
+Fix measurement of time executed test with yield
