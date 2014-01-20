@@ -110,6 +110,14 @@ class CustomLoaderForGenerators(TestLoader):
         # Back to built-in nose method
         return self.suiteClass(generate, context=generator, can_split=False)
 
+def test_check(obj, cls):
+    test_class_instance = cls()
+    test_class_instance.setUp()
+    test_class_instance.setup_mocks()
+    generator = obj
+    generator_test = generator(test_class_instance)
+    return generator_test
+
 
 class YieldWithSetUp(Plugin):
     """
@@ -126,20 +134,26 @@ class YieldWithSetUp(Plugin):
         Only this function from nose API give test (cls) and testCase (cls).
         """
         mock_patch = None
-        if ismethod(obj) and isgenerator(obj) and isclass(cls):
 
-            if hasattr(obj, 'patchings'):
-                mock_patch = get_mock_patch_of_test(obj)
+        # If generator is found, override loader from nose
 
-            # If generator is found, override loader from nose
-            x = CustomLoaderForGenerators()
+        if not callable(cls):
+            return None
+        else:
+            found_generator_test = test_check(obj, cls)
 
-            # 'return' is required on x when we have generators.
-            # This will allow in test function, change to next
-            # check function (internal function)
-            return x.load_tests_from_generator_method_with_set_up(
-                obj, cls, mock_patch
-            )
+            if found_generator_test:
+                if hasattr(obj, 'patchings'):
+                    mock_patch = get_mock_patch_of_test(obj)
+                # 'return' is required on x when we have generators.
+                # This will allow in test function, change to next
+                # check function (internal function)
+                x = CustomLoaderForGenerators()
+                return x.load_tests_from_generator_method_with_set_up(
+                    obj, cls, mock_patch
+                )
+            else:
+                return None
 
 
 def get_mock_patch_of_test(obj):
